@@ -71,6 +71,10 @@ module.exports = function(_env, argv) {
           "process.env.NODE_ENV": JSON.stringify(
             isProduction ? "production" : "development"
           )
+        }),
+        new HtmlWebpackPlugin({
+          template: path.resolve(__dirname, "public/index.html"),
+          inject: true
         })
     ].filter(Boolean)
   };
