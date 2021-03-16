@@ -98,7 +98,29 @@ module.exports = function(_env, argv) {
           }
         }),
         new OptimizeCssAssetsPlugin()
-      ]
+      ],
+      splitChunks: {
+        chunks: "all",
+        minSize: 0,
+        maxInitialRequests: 20,
+        maxAsyncRequests: 20,
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module, chunks, cacheGroupKey) {
+              const packageName = module.context.match(
+                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+              )[1];
+              return `${cacheGroupKey}.${packageName.replace("@", "")}`;
+            }
+          },
+          common: {
+            minChunks: 2,
+            priority: -10
+          }
+        }
+      },
+      runtimeChunk: "single"
     }
   };
 };
