@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = function(_env, argv) {
   const isProduction = argv.mode === "production";
@@ -34,7 +35,12 @@ module.exports = function(_env, argv) {
           test: /\.css$/,
           use: [
             isProduction ? MiniCssExtractPlugin.loader : "style-loader",
-            "css-loader"
+            {
+              loader: "css-loader",
+              options: {
+                modules: true
+              }
+            }
           ]
         },
         {
@@ -77,6 +83,9 @@ module.exports = function(_env, argv) {
         new HtmlWebpackPlugin({
           template: path.resolve(__dirname, "public/index.html"),
           inject: true
+        }),
+        new ForkTsCheckerWebpackPlugin({
+          async: false
         })
     ].filter(Boolean),
     optimization: {
