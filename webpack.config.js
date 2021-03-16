@@ -1,5 +1,6 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
 
 module.exports = function(_env, argv) {
   const isProduction = argv.mode === "production";
@@ -47,6 +48,13 @@ module.exports = function(_env, argv) {
         {
           test: /\.svg$/,
           use: ["@svgr/webpack"]
+        },
+        {
+          test: /\.(eot|otf|ttf|woff|woff2)$/,
+          loader: require.resolve("file-loader"),
+          options: {
+            name: "static/media/[name].[hash:8].[ext]"
+          }
         }
       ]
     },
@@ -58,6 +66,11 @@ module.exports = function(_env, argv) {
         new MiniCssExtractPlugin({
           filename: "assets/css/[name].[contenthash:8].css",
           chunkFilename: "assets/css/[name].[contenthash:8].chunk.css"
+        }),
+        new webpack.DefinePlugin({
+          "process.env.NODE_ENV": JSON.stringify(
+            isProduction ? "production" : "development"
+          )
         })
     ].filter(Boolean)
   };
